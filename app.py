@@ -3,10 +3,23 @@ import torch
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 import cv2
+import logging
 
 app = Flask(__name__)
 
-model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt')
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Load model once at startup
+try:
+    logger.info("Loading YOLOv5 model...")
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt', trust_repo=True)
+    model.eval()
+    logger.info("Model loaded successfully")
+except Exception as e:
+    logger.error(f"Failed to load model: {e}")
+    model = None
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -45,6 +58,9 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    if model is None:
+        return "Model not loaded", 500
+    
     if 'file' not in request.files:
         return redirect(request.url)
     
@@ -56,12 +72,18 @@ def upload_file():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(file_path)
 
-    img = preprocess_image(file_path)
-    results = predict_image(img)
-    processed_results = process_results(results)
-    
-    output_path = os.path.join(app.config['UPLOAD_FOLDER'], f'output_{filename}')
-    save_visualization(img, processed_results, output_path)
+    logger.info(f"Processing image: {filename}")
+    try:
+        img = preprocess_image(file_path)
+        results = predict_image(img)
+        processed_results = process_results(results)
+        
+        output_path = os.path.join(app.config['UPLOAD_FOLDER'], f'output_{filename}')
+        save_visualization(img, processed_results, output_path)
+        logger.info(f"Processing complete for {filename}")
+    except Exception as e:
+        logger.error(f"Error processing image: {e}")
+        return f"Error processing image: {e}", 500
 
     return redirect(url_for('result', filename=f'output_{filename}'))
 
