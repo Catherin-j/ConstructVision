@@ -54,7 +54,12 @@ def save_visualization(img, results, output_path):
 
 @app.route('/')
 def index():
+    logger.info("Index page accessed")
     return render_template('index.html')
+
+@app.route('/health')
+def health():
+    return {"status": "ok", "model_loaded": model is not None}, 200
 
 @app.route('/upload', methods=['POST'])
 def upload_file():

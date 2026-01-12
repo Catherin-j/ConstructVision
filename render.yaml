@@ -3,7 +3,7 @@ services:
     name: constructvision
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 1 --threads 2 --timeout 180 --preload
+    startCommand: gunicorn app:app --workers 1 --threads 2 --timeout 300 --preload
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
