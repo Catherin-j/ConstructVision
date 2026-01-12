@@ -4,5 +4,7 @@ torch==2.6.0
 torchvision==0.21.0
 opencv-python-headless==4.8.0.76
 pandas==2.2.3
+tqdm==4.67.1
+seaborn==0.13.2
 Werkzeug==2.3.7
 ultralytics
