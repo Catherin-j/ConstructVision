@@ -94,11 +94,5 @@ git push origin feature-name
 ## License
 This project is MIT licensed. See the LICENSE file for details.
 
-## Contact
-For any queries, suggestions, or feedback:
-- **Name**: Afsheen Aziz
-- **Email**: afsheenonnar@gmail.com
-- **GitHub**: https://github.com/Afsheen-Aziz
-
 ---
 Thank you for exploring ConstructVision! Together, let's advance the future of AI in construction.
